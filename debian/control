@@ -9,4 +9,4 @@ Package: ebsmount
 Architecture: all
 Depends: python (>= 2.4)
 Section: misc
-Description: Example
+Description: Automatically mount EC2 EBS (Elastic Block Storage) devices
