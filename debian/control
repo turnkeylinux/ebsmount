@@ -1,0 +1,12 @@
+Source: ebsmount
+Section: misc
+Priority: optional
+Maintainer: Alon Swartz <alon@sterilesecurity.com>
+Build-Depends: debhelper (>> 4.2.0)
+Standards-Version: 3.6.1
+
+Package: ebsmount
+Architecture: all
+Depends: python (>= 2.4)
+Section: misc
+Description: Example
