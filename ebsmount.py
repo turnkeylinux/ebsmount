@@ -22,6 +22,10 @@ def ebsmount_add(devname, mountdir):
             log(devname, "could not identify filesystem: %s" % devpath)
             continue
 
+        if not filesystem in config.filesystems.split():
+            log(devname, "filesystem (%s) not supported: %s" % (filesystem,devpath))
+            continue
+
         if is_mounted(devpath):
             log(devname, "already mounted: %s" % devpath)
             continue
