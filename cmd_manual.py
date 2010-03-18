@@ -4,17 +4,22 @@
 Arguments:
 
     device          EBS device to mount (e.g., /dev/sdh)
+
+Options:
+
+    --format=FS     Format device prior to mount (e.g., --format=ext3)
 """
 
 import os
 import sys
+import getopt
 
 import ebsmount
 import executil
 from utils import config
 
 def usage():
-    print >> sys.stderr, "Syntax: %s <device>" % sys.argv[0]
+    print >> sys.stderr, "Syntax: %s [-opts] <device>" % sys.argv[0]
     print >> sys.stderr, __doc__.strip()
     sys.exit(1)
 
@@ -34,14 +39,33 @@ def _get_physdevpath(devname):
     return None
 
 def main():
-    if not len(sys.argv) == 2:
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], 'h', ['format='])
+    except getopt.GetoptError, e:
+        usage(e)
+
+    filesystem = None
+    for opt, val in opts:
+        if opt == '-h':
+            usage()
+
+        if opt == '--format':
+            filesystem = val
+
+    if not len(args) == 1:
         usage()
 
-    devname = sys.argv[1]
+    devname = args[1]
     physdevpath = _get_physdevpath(devname)
 
     if not physdevpath:
         fatal("failed lookup of physdevpath")
+
+    if filesystem:
+        if not filesystem in config.filesystems.split():
+            fatal("%s is not supported in %s" % (filesystem, config.filesystems))
+
+        executil.system("mkfs." + filesystem, "-q", devname)
 
     mountdir = os.path.join(config.mountdir, os.path.basename(physdevpath))
     ebsmount.ebsmount_add(devname, mountdir)
