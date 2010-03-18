@@ -1,16 +1,18 @@
 #!/usr/bin/python
 
-import executil
+from executil import ExecError, getoutput
 
 class Device:
     """class to hold device information enumerated from udev database"""
-    def __init__(self, s):
+    def __init__(self, s, volinfo=True):
         self.path = None
         self.name = None
         self.symlinks = []
         self.env = {}
 
         self._parse_raw_data(s)
+        if volinfo:
+            self._get_volinfo()
 
     def _parse_raw_data(self, s):
         for entry in s.splitlines():
@@ -33,9 +35,27 @@ class Device:
                 name, val = value.split("=")
                 self.env[name] = val
 
-def query(device=None):
+    def _get_volinfo(self):
+        if self.env.has_key('DEVTYPE') and self.env['DEVTYPE'] == 'disk':
+            try:
+                volume_info = getoutput('vol_id /dev/%s' % self.name)
+            except ExecError:
+                return
+
+            for value in volume_info.splitlines():
+                name, val = value.split("=")
+                if self.env.has_key(name):
+                    continue
+
+                if not val:
+                    continue
+
+                self.env[name] = val
+
+def query(device=None, volinfo=True):
     """query udev database and return device(s) information
        if no device is specified, all devices will be returned
+       optionally query volume info (vol_id) on disk devices
     """
     if device:
         cmd = "udevadm info --query all --name %s" % device
@@ -43,8 +63,8 @@ def query(device=None):
         cmd = "udevadm info --export-db"
 
     devices = []
-    for s in executil.getoutput(cmd).split('\n\n'):
-        devices.append(Device(s))
+    for s in getoutput(cmd).split('\n\n'):
+        devices.append(Device(s, volinfo))
 
     return devices
     
