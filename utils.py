@@ -5,6 +5,7 @@ from conffile import ConfFile
 
 class EBSMountConf(ConfFile):
     CONF_FILE = os.getenv('EBSMOUNT_CONF', '/etc/ebsmount.conf')
+    REQUIRED = ['enabled', 'mountdir', 'mountoptions', 'filesystems', 'logfile']
 
 config = EBSMountConf()
 
