@@ -36,7 +36,9 @@ def ebsmount_add(devname, mountdir):
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
         if exists(scriptpath):
-            system("run-parts --verbose --exit-on-error %s" % scriptpath)
+            cmd = "run-parts --verbose --exit-on-error %s" % scriptpath
+            cmd += " 2>&1 | tee -a %s" % config.logfile
+            system(cmd)
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
