@@ -42,5 +42,16 @@ def ebsmount_add(devname, mountdir):
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
-    pass
+
+    mounted = False
+    for d in os.listdir(mountdir):
+        path = join(mountdir, d)
+        if is_mounted(path):
+            mounted = True
+            continue
+
+        os.rmdir(path)
+
+    if not mounted:
+        os.rmdir(mountdir)
 
