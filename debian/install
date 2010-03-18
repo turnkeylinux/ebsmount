@@ -1,0 +1,3 @@
+ebsmount.conf       /etc/
+85-ebsmount.rules   /etc/udev/rules.d/
+
