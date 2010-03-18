@@ -1,6 +1,13 @@
 
 import os
 import executil
+from conffile import ConfFile
+
+class EBSMountConf(ConfFile):
+    CONF_FILE = os.getenv('EBSMOUNT_CONF', '/etc/ebsmount.conf')
+
+config = EBSMountConf()
+
 
 def log(devname, s):
     print "%s: %s" % (devname, s)

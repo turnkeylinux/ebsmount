@@ -15,7 +15,7 @@ import os
 import sys
 
 import ebsmount
-from utils import log
+from utils import log, config
 
 def usage(e=None):
     if e:
@@ -52,7 +52,7 @@ def main():
     # log trigger
     log(DEVNAME, "received %s trigger" % action)
 
-    mountdir = os.path.join("/media/ebs", os.path.basename(PHYSDEVPATH))
+    mountdir = os.path.join(config.mountdir, os.path.basename(PHYSDEVPATH))
     func = getattr(ebsmount, 'ebsmount_' + action)
     func(DEVNAME, mountdir)
 
