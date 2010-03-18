@@ -2,7 +2,7 @@
 from os.path import *
 
 import udevdb
-from utils import is_mounted, mount
+from utils import log, is_mounted, mount
 
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
@@ -19,15 +19,15 @@ def ebsmount_add(devname, mountdir):
 
         filesystem = device.env.get('ID_FS_TYPE', None)
         if not filesystem:
-            print "could not identify filesystem: %s" % devpath
+            log(devname, "could not identify filesystem: %s" % devpath)
             continue
 
         if is_mounted(devpath):
-            print "already mounted: %s" % devpath
+            log(devname, "already mounted: %s" % devpath)
             continue
 
         mount(devpath, mountpath, mountoptions)
-        print "mounted %s %s (%s)" % (devpath, mountpath, mountoptions)
+        log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""

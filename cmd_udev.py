@@ -15,6 +15,7 @@ import os
 import sys
 
 import ebsmount
+from utils import log
 
 def usage(e=None):
     if e:
@@ -48,7 +49,10 @@ def main():
     if not PHYSDEVPATH.startswith('/devices/xen/vbd-'):
         usage('PHYSDEVPATH is not of the expected structure')
 
-    mountdir = os.path.join('/media/ebs', os.path.basename(PHYSDEVPATH))
+    # log trigger
+    log(DEVNAME, "received %s trigger" % action)
+
+    mountdir = os.path.join("/media/ebs", os.path.basename(PHYSDEVPATH))
     func = getattr(ebsmount, 'ebsmount_' + action)
     func(DEVNAME, mountdir)
 

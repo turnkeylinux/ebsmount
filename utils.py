@@ -2,6 +2,9 @@
 import os
 import executil
 
+def log(devname, s):
+    print "%s: %s" % (devname, s)
+
 def mkdir_parents(path, mode=0777):
     """mkdir 'path' recursively (I.e., equivalent to mkdir -p)"""
     dirs = path.split("/")
