@@ -2,7 +2,7 @@
 from os.path import *
 
 import udevdb
-from utils import log, is_mounted, mount
+from utils import config, log, is_mounted, mount
 
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
@@ -15,7 +15,7 @@ def ebsmount_add(devname, mountdir):
     for device in matching_devices:
         devpath = join('/dev', device.name)
         mountpath = join(mountdir, device.env.get('ID_FS_UUID', devpath[-1])[:4])
-        mountoptions = "noatime"
+        mountoptions = ",".join(config.mountoptions.split())
 
         filesystem = device.env.get('ID_FS_TYPE', None)
         if not filesystem:
