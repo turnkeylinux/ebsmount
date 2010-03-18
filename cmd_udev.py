@@ -33,6 +33,9 @@ def main():
     if not len(sys.argv) == 2:
         usage()
 
+    if not config.enabled.lower() == "true":
+        fatal('ebsmount is not enabled (%s)' % config.CONF_FILE)
+
     action = sys.argv[1]
     DEVNAME = os.getenv('DEVNAME', None)
     PHYSDEVPATH = os.getenv('PHYSDEVPATH', None)
