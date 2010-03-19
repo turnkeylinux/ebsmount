@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org> - all rights reserved
+
 """EBS Mount - manually mount EBS device (simulates udev add trigger)
 
 Arguments:

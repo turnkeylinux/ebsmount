@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org> - all rights reserved
+
 """EBS Mount - triggered by udev on EBS attach and detach
 
 Arguments:

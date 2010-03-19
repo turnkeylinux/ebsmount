@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org> - all rights reserved
 
 from executil import ExecError, getoutput
 
