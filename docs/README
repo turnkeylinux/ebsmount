@@ -1,0 +1,63 @@
+EBSmount: Automatically mount EC2 EBS (Elastic Block Storage) devices
+=====================================================================
+
+EBSmount has 2 commands:
+
+    ebsmount-udev       Triggered by udev on EBS attach and detach
+    ebsmount-manual     Manually mount EBS device (simulates udev add trigger)
+
+Features:
+
+    - Automatically mounts EBS devices when they are attached (via udev)
+    - Supports formatted devices, as well as partitions
+    - Ignores unformatted devices and unsupported filesystems
+    - Device/partition uniquely identifiable mountpoints
+    - Configurable mount options
+    - Hooking scripts execution upon mount
+    - Convenience command for a one step format and mount
+    - Logging
+
+Quick start:
+    
+    - If the EBS device is not formatted, it will not be mounted
+      automatically. For convenience, the user can format and mount the
+      device in one step, for example:
+
+        ebsmount-manual --format=ext3 /dev/sdh
+
+Default configuration (/etc/ebsmount.conf):
+
+    ENABLED=True
+    MOUNTDIR=/media/ebs
+    MOUNTOPTIONS=noatime
+    FILESYSTEMS=ext2 ext3
+    LOGFILE=/var/log/ebsmount.log
+
+Unique mountpoints:
+
+    - Every EBS filesystem is mounted to its own uniquely identifiable
+      mountpoint, based on:
+
+        $(MOUNTDIR)/$(basename PHYSDEVPATH)/$(FS_UUID)[:4]
+
+    - For example:
+    
+        /media/ebs/vbd-2160/a1b2
+
+Hooking scripts:
+
+    - Once a filesystem is mounted, EBSmount will execute scripts in
+      alpha-numeric ordering located in MOUNTPOINT/.ebsmount
+
+    - This provides a very powerful mechanism. In its simplest form, the
+      user might want to symlink the mountpoint to a more accessible
+      path, for example:
+
+        MOUNTPOINT/.ebsmount/10symlink
+
+        #!/bin/bash -e
+        target=/vol
+        mountp=$(dirname $(dirname $0))
+        ln -sf $mountp $target
+
+
