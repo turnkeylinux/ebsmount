@@ -16,9 +16,12 @@ import getopt
 
 import ebsmount
 import executil
-from utils import config
+from utils import config, is_mounted
 
-def usage():
+def usage(e=None):
+    if e:
+        print >> sys.stderr, "error: " + str(e)
+
     print >> sys.stderr, "Syntax: %s [-opts] <device>" % sys.argv[0]
     print >> sys.stderr, __doc__.strip()
     sys.exit(1)
@@ -55,15 +58,20 @@ def main():
     if not len(args) == 1:
         usage()
 
-    devname = args[1]
-    physdevpath = _get_physdevpath(devname)
+    devname = args[0]
+    if not os.path.exists(devname):
+        fatal("%s does not exist" % devname)
 
+    physdevpath = _get_physdevpath(devname)
     if not physdevpath:
         fatal("failed lookup of physdevpath")
 
     if filesystem:
+        if is_mounted(devname):
+            fatal("%s is mounted" % devname)
+
         if not filesystem in config.filesystems.split():
-            fatal("%s is not supported in %s" % (filesystem, config.filesystems))
+            fatal("%s is not supported in %s" % (filesystem, config.CONF_FILE))
 
         executil.system("mkfs." + filesystem, "-q", devname)
 
