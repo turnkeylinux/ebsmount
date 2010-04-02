@@ -5,7 +5,7 @@
 
 Arguments:
 
-    device          EBS device to mount (e.g., /dev/sdh)
+    device          EBS device to mount (e.g., /dev/sdf)
 
 Options:
 

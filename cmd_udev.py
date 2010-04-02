@@ -9,7 +9,7 @@ Arguments:
 
 Environment variables:
 
-    DEVNAME         (required: e.g., /dev/sdh)
+    DEVNAME         (required: e.g., /dev/sdf)
     PHYSDEVPATH     (required: e.g., /devices/xen/vbd-2160)
 """
 
