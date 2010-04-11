@@ -58,6 +58,6 @@ Hooking scripts:
         #!/bin/bash -e
         target=/vol
         mountp=$(dirname $(dirname $0))
-        ln -sf $mountp $target
+        [ ! -h $target ] && ln -s $mountp $target
 
 
