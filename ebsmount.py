@@ -3,6 +3,8 @@
 import os
 from os.path import *
 
+import pwd
+
 import udevdb
 from executil import system
 from utils import config, log, is_mounted, mount
@@ -38,7 +40,8 @@ def ebsmount_add(devname, mountdir):
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
         if exists(scriptpath):
-            cmd = "run-parts --verbose %s" % scriptpath
+            os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
+            cmd = "/bin/bash --login -c 'export PATH; run-parts --verbose %s'" % scriptpath
             cmd += " 2>&1 | tee -a %s" % config.logfile
             system(cmd)
 
