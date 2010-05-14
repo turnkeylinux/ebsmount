@@ -38,7 +38,7 @@ def ebsmount_add(devname, mountdir):
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
         if exists(scriptpath):
-            cmd = "run-parts --verbose --exit-on-error %s" % scriptpath
+            cmd = "run-parts --verbose %s" % scriptpath
             cmd += " 2>&1 | tee -a %s" % config.logfile
             system(cmd)
 
