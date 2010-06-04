@@ -17,8 +17,9 @@ class Device:
 
     def _parse_raw_data(self, s):
         for entry in s.splitlines():
-            type, value = entry.split(' ', 1)
-            type = type.strip(":")
+            type, value = entry.split(':', 1)
+            type = type.strip()
+            value = value.strip()
 
             if type == "P":
                 self.path = value
