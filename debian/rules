@@ -23,6 +23,7 @@ binary-indep: install
 	dh_testdir
 	dh_testroot
 	dh_installdocs docs/
+	dh_installman man/ebsmount-manual.1 man/ebsmount-udev.8
 	dh_installchangelogs
 	dh_compress
 	dh_installdeb
