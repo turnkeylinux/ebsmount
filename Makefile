@@ -5,6 +5,7 @@ name=
 prefix = /usr/local
 PATH_BIN = $(prefix)/bin
 PATH_INSTALL_LIB = $(prefix)/lib/$(progname)
+PATH_UDEV_RULES = $(destdir)/etc/udev/rules.d
 
 all: help
 
@@ -43,14 +44,19 @@ define with-py-executables
 	fi;
 endef
 
+# set path bin in udev rules
+%.rules: %.rules.in
+	sed "s|@PATH_BIN@|$(call truepath,$(PATH_BIN))|g" $< > $@
+
 # target: install
-install:
+install: 85-ebsmount.rules
 	@echo
 	@echo \*\* CONFIG: prefix = $(prefix) \*\*
 	@echo 
 
-	install -d $(PATH_BIN) $(PATH_INSTALL_LIB)
+	install -d $(PATH_BIN) $(PATH_INSTALL_LIB) $(PATH_UDEV_RULES)
 	cp *.py $(PATH_INSTALL_LIB)
+	cp *.rules $(PATH_UDEV_RULES)
 
 	$(call with-py-executables, \
 	  ln -fs $(call libpath, $$module) $(PATH_BIN)/$(progname), \
@@ -59,6 +65,7 @@ install:
 # target: uninstall
 uninstall:
 	rm -rf $(PATH_INSTALL_LIB)
+	rm -f $(PATH_UDEV_RULES)/85-ebsmount.rules
 
 	$(call with-py-executables, \
 	  rm -f $(PATH_BIN)/$(progname), \
@@ -66,4 +73,4 @@ uninstall:
 
 # target: clean
 clean:
-	rm -f *.pyc *.pyo _$(progname)
+	rm -f *.pyc *.pyo *.rules _$(progname)

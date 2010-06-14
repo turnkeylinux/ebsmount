@@ -16,7 +16,7 @@ install:
 	dh_testdir
 	dh_installdirs
 	dh_install
-	$(MAKE) install prefix=$(prefix)
+	$(MAKE) install prefix=$(prefix) destdir=$(buildroot)
 	dh_link
 
 binary-indep: install

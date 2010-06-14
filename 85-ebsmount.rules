@@ -1,6 +1,0 @@
-# udev rules to trigger ebsmount-udev on ebs attach|detach
-
-KERNEL=="sd[f-p]", SUBSYSTEM=="block", ATTRS{devtype}=="vbd", ACTION=="add", RUN+="/usr/bin/ebsmount-udev add"
-
-KERNEL=="sd[f-p]", SUBSYSTEM=="block", ACTION=="remove", RUN+="/usr/bin/ebsmount-udev remove"
-
