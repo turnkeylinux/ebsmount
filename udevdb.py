@@ -65,7 +65,7 @@ def query(device=None, volinfo=True):
         cmd = "udevadm info --export-db"
 
     devices = []
-    for s in getoutput(cmd).split('\n\n'):
+    for s in getoutput(cmd + " 2>/dev/null").split('\n\n'):
         devices.append(Device(s, volinfo))
 
     return devices
