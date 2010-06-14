@@ -1,0 +1,29 @@
+===================
+v0.91 Release Notes
+===================
+
+* Added Eucalypus support.
+
+  - DEVPATHS have been added to ebsmount.conf
+
+* Mountpoint has changed: 
+
+  - OLD: $(MOUNTDIR)/$(basename PHYSDEVPATH)/$(FS_UUID)[:4]
+  - NEW: $(MOUNTDIR)/$(FS_UUID)[:6]
+
+* Hooking script fixes:
+
+  - Removed --exit-on-error
+  - Fixed run-parts environment
+
+* Cleaned up Makefile:
+
+  - Support full package installation via Makefile.
+  - Dynamic PATH_BIN substitution in udev rules.
+  - Updated udev rules path for Karmic+
+  - Removed dist target.
+
+* Updated packaging and added manpages for lintian compliance.
+
+* Misc bugfixes and refactoring.
+
