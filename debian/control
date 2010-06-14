@@ -9,8 +9,8 @@ Package: ebsmount
 Architecture: all
 Depends: python (>= 2.4), udev, turnkey-pylib
 Section: misc
-Description: Automatically mount EC2 EBS (Elastic Block Storage) devices
- Automatically mounts EBS devices when they are attached, supports
- formatted devices as well as partitions, uniquely identifiable mount
- points, and hooking scripts execution upon mount.
+Description: Automatically mount EC2/Eucalyptus EBS devices
+ Automatically mounts EBS (Elastic Block Storage) devices when they are
+ attached, supports formatted devices as well as partitions, uniquely
+ identifiable mount points, and hooking scripts execution upon mount.
 

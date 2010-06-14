@@ -1,5 +1,5 @@
-EBSmount: Automatically mount EC2 EBS (Elastic Block Storage) devices
-=====================================================================
+EBSmount: Automatically mount EC2/Eucalyptus EBS devices
+========================================================
 
 EBSmount has 2 commands:
 
@@ -8,6 +8,7 @@ EBSmount has 2 commands:
 
 Features:
 
+    - Supports Amazon EC2 and Eucalyptus EBS devices
     - Automatically mounts EBS devices when they are attached (via udev)
     - Supports formatted devices, as well as partitions
     - Ignores unformatted devices and unsupported filesystems
@@ -32,6 +33,8 @@ Default configuration (/etc/ebsmount.conf):
     MOUNTOPTIONS=noatime
     FILESYSTEMS=ext2 ext3
     LOGFILE=/var/log/ebsmount.log
+
+    DEVPATHS=/devices/xen/vbd- /devices/virtio-pci/virtio
 
 Unique mountpoints:
 

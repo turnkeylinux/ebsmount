@@ -5,7 +5,7 @@
 
 Arguments:
 
-    device          EBS device to mount (e.g., /dev/sdf)
+    device          EBS device to mount (e.g., /dev/sdf, /dev/vda)
 
 Options:
 
@@ -32,16 +32,17 @@ def fatal(s):
     print >> sys.stderr, "error: " + str(s)
     sys.exit(1)
 
-def _get_physdevpath(devname):
-    """ugly hack to get the physical device path of first parent"""
+def _expected_devpath(devname, devpaths):
+    """ugly hack to test expected structure of devpath"""
     raw_output = executil.getoutput('udevadm info -a -n %s' % devname)
 
     for line in raw_output.splitlines():
         line = line.strip()
-        if line.startswith("looking at parent device '/devices/xen/vbd-"):
-            return line.split()[-1].strip(":").strip("'")
+        for devpath in devpaths:
+            if line.startswith("looking at parent device '%s" % devpath):
+                return True
 
-    return None
+    return False
 
 def main():
     try:
@@ -64,9 +65,8 @@ def main():
     if not os.path.exists(devname):
         fatal("%s does not exist" % devname)
 
-    physdevpath = _get_physdevpath(devname)
-    if not physdevpath:
-        fatal("failed lookup of physdevpath")
+    if not _expected_devpath(devname, config.devpaths.split()):
+        fatal("devpath not of expected structure, or failed lookup")
 
     if filesystem:
         if is_mounted(devname):
