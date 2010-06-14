@@ -5,8 +5,8 @@ from executil import ExecError, getoutput
 class Device:
     """class to hold device information enumerated from udev database"""
     def __init__(self, s, volinfo=True):
-        self.path = None
-        self.name = None
+        self.path = ''
+        self.name = ''
         self.symlinks = []
         self.env = {}
 
@@ -33,8 +33,8 @@ class Device:
                 continue
 
             if type == "E":
-                name, val = value.split("=")
-                self.env[name] = val
+                name, val = value.split("=", 1)
+                self.env[name] = val.lstrip("=")
 
     def _get_volinfo(self):
         if self.env.has_key('DEVTYPE') and self.env['DEVTYPE'] == 'disk':
