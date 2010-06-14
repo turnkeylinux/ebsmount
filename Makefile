@@ -6,7 +6,7 @@ prefix = /usr/local
 PATH_BIN = $(prefix)/bin
 PATH_ETC = $(destdir)/etc
 PATH_INSTALL_LIB = $(prefix)/lib/$(progname)
-PATH_UDEV_RULES = $(destdir)/etc/udev/rules.d
+PATH_UDEV_RULES = $(destdir)/lib/udev/rules.d
 
 all: help
 
