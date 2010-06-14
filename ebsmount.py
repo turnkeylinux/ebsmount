@@ -19,7 +19,7 @@ def ebsmount_add(devname, mountdir):
 
     for device in matching_devices:
         devpath = join('/dev', device.name)
-        mountpath = join(mountdir, device.env.get('ID_FS_UUID', devpath[-1])[:4])
+        mountpath = join(mountdir, device.env.get('ID_FS_UUID', devpath[-1])[:6])
         mountoptions = ",".join(config.mountoptions.split())
         scriptpath = join(mountpath, ".ebsmount")
 

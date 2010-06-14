@@ -57,9 +57,8 @@ def main():
     # log trigger
     log(DEVNAME, "received %s trigger" % action)
 
-    mountdir = os.path.join(config.mountdir, os.path.basename(PHYSDEVPATH))
     func = getattr(ebsmount, 'ebsmount_' + action)
-    func(DEVNAME, mountdir)
+    func(DEVNAME, config.mountdir)
 
 if __name__=="__main__":
     main()

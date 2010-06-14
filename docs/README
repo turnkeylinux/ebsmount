@@ -38,11 +38,11 @@ Unique mountpoints:
     - Every EBS filesystem is mounted to its own uniquely identifiable
       mountpoint, based on:
 
-        $(MOUNTDIR)/$(basename PHYSDEVPATH)/$(FS_UUID)[:4]
+        $(MOUNTDIR)/$(FS_UUID)[:6]
 
     - For example:
     
-        /media/ebs/vbd-2160/a1b2
+        /media/ebs/a1b2c3
 
 Hooking scripts:
 

@@ -77,8 +77,7 @@ def main():
 
         executil.system("mkfs." + filesystem, "-q", devname)
 
-    mountdir = os.path.join(config.mountdir, os.path.basename(physdevpath))
-    ebsmount.ebsmount_add(devname, mountdir)
+    ebsmount.ebsmount_add(devname, config.mountdir)
 
 if __name__=="__main__":
     main()
