@@ -1,0 +1,6 @@
+===================
+v0.92 Release Notes
+===================
+
+* added GPL and updated copyright
+
