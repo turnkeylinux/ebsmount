@@ -18,7 +18,7 @@ import executil
 from conffile import ConfFile
 
 class EBSMountConf(ConfFile):
-    CONF_FILE = os.getenv('EBSMOUNT_CONF', '/etc/ebsmount.conf')
+    CONF_FILE = '/etc/ebsmount.conf'
     REQUIRED = ['enabled', 'runhooks', 'mountdir', 'mountoptions', 'filesystems', 'logfile', 'devpaths']
 
 config = EBSMountConf()
