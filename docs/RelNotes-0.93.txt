@@ -1,0 +1,16 @@
+===================
+v0.93 Release Notes
+===================
+
+* Disabled execution of hooks by default (security).
+
+    - To enable, set RUNHOOKS=True in /etc/ebsmount.conf
+    - Additionally, hook scripts won't be executed if they are not owned
+      by root (uid and gid).
+
+* MOUNTPOINT is set in environment for hook scripts usage (convenience).
+
+* Added ext4 to FILESYSTEMS so it's supported out of the box.
+
+* Removed EBSMOUNT_CONF envvar support (left over from testing).
+
