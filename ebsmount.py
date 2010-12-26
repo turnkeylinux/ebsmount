@@ -22,23 +22,6 @@ import udevdb
 from executil import system
 from utils import config, log, is_mounted, mount
 
-def _run_hooks(dir, mountpath, logfile):
-    for file in os.listdir(dir):
-        fpath = join(dir, file)
-        if not os.access(fpath, os.X_OK):
-            log("* skipping '%s', not executable" % fpath)
-            continue
-
-        if not os.stat(fpath).st_uid == 0 and not os.stat(fpath).st_gid == 0:
-            log("* skipping '%s', not owned root:root" % fpath)
-            continue
-
-        log("* executing: %s" % fpath)
-
-        os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
-        os.environ['MOUNTPOINT'] = mountpath
-        system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, logfile))
-
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
 
@@ -70,7 +53,22 @@ def ebsmount_add(devname, mountdir):
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
         if config.runhooks and exists(hookspath):
-            _run_hooks(hookspath, mountpath, config.logfile)
+            hooks = os.listdir(hookspath)
+            hooks.sort()
+            for file in hooks:
+                fpath = join(hookspath, file)
+                if not os.access(fpath, os.X_OK):
+                    log(devname, "skipping hook: '%s', not executable" % file)
+                    continue
+
+                if not os.stat(fpath).st_uid == 0 or not os.stat(fpath).st_gid == 0:
+                    log(devname, "skipping hook: '%s', not owned root:root" % file)
+                    continue
+
+                log(devname, "executing hook: %s" % file)
+                os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
+                os.environ['MOUNTPOINT'] = mountpath
+                system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, config.logfile))
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""

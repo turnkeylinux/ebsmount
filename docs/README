@@ -69,6 +69,6 @@ Hooking scripts:
         #!/bin/bash -e
         target=/vol
         mountp=$MOUNTPOINT
-        [ ! -e $target ] && ln -s $mountp $target
+        [ -e $target ] || ln -s $mountp $target
 
 
