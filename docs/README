@@ -14,7 +14,7 @@ Features:
     - Ignores unformatted devices and unsupported filesystems
     - Device/partition uniquely identifiable mountpoints
     - Configurable mount options
-    - Hooking scripts execution upon mount
+    - Hooking scripts execution upon mount (optionally)
     - Convenience command for a one step format and mount
     - Logging
 
@@ -24,14 +24,15 @@ Quick start:
       automatically. For convenience, the user can format and mount the
       device in one step, for example:
 
-        ebsmount-manual --format=ext3 /dev/sdh
+        ebsmount-manual --format=ext4 /dev/sdf
 
 Default configuration (/etc/ebsmount.conf):
 
     ENABLED=True
+    RUNHOOKS=False
     MOUNTDIR=/media/ebs
     MOUNTOPTIONS=noatime
-    FILESYSTEMS=ext2 ext3
+    FILESYSTEMS=ext2 ext3 ext4
     LOGFILE=/var/log/ebsmount.log
 
     DEVPATHS=/devices/xen/vbd- /devices/virtio-pci/virtio
@@ -51,6 +52,10 @@ Hooking scripts:
 
     - Once a filesystem is mounted, EBSmount will execute scripts in
       alpha-numeric ordering located in MOUNTPOINT/.ebsmount
+
+    - Hooking scripts execution is disabled by default. To enable execution,
+      RUNHOOKS must be set to True in /etc/ebsmount.conf Additionally, hook
+      scripts will only be executed if they are owned by root.
 
     - This provides a very powerful mechanism. In its simplest form, the
       user might want to symlink the mountpoint to a more accessible
