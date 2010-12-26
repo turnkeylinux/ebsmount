@@ -22,7 +22,7 @@ import udevdb
 from executil import system
 from utils import config, log, is_mounted, mount
 
-def _run_hooks(dir, logfile):
+def _run_hooks(dir, mountpath, logfile):
     for file in os.listdir(dir):
         fpath = join(dir, file)
         if not os.access(fpath, os.X_OK):
@@ -36,6 +36,7 @@ def _run_hooks(dir, logfile):
         log("* executing: %s" % fpath)
 
         os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
+        os.environ['MOUNTPOINT'] = mountpath
         system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, logfile))
 
 def ebsmount_add(devname, mountdir):
@@ -69,7 +70,7 @@ def ebsmount_add(devname, mountdir):
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
         if config.runhooks and exists(hookspath):
-            _run_hooks(hookspath, config.logfile)
+            _run_hooks(hookspath, mountpath, config.logfile)
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
