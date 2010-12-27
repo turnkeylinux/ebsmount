@@ -1,0 +1,6 @@
+===================
+v0.94 Release Notes
+===================
+
+* refactored/bugfix config.runhooks check and output to log if not set
+
