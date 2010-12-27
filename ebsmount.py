@@ -52,9 +52,14 @@ def ebsmount_add(devname, mountdir):
         mount(devpath, mountpath, mountoptions)
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
-        if config.runhooks and exists(hookspath):
+        if exists(hookspath):
             hooks = os.listdir(hookspath)
             hooks.sort()
+
+            if hooks and not config.runhooks.lower() == "true":
+                log(devname, "skipping hooks: RUNHOOKS not set to True")
+                continue
+
             for file in hooks:
                 fpath = join(hookspath, file)
                 if not os.access(fpath, os.X_OK):
