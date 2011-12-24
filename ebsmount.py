@@ -25,6 +25,7 @@ from utils import config, log, is_mounted, mount
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
 
+    log(devname, 'attached')
     matching_devices = []
     for device in udevdb.query():
         if device.name.startswith(basename(devname)):
@@ -49,6 +50,7 @@ def ebsmount_add(devname, mountdir):
             log(devname, "already mounted: %s" % devpath)
             continue
 
+        log(devname, "mounting %s %s (%s)" % (devpath, mountpath, mountoptions))
         mount(devpath, mountpath, mountoptions)
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
@@ -78,6 +80,7 @@ def ebsmount_add(devname, mountdir):
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
 
+    log(devname, 'detached')
     mounted = False
     for d in os.listdir(mountdir):
         path = join(mountdir, d)

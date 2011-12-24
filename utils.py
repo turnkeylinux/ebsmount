@@ -16,6 +16,7 @@
 import os
 import executil
 from conffile import ConfFile
+from time import gmtime, strftime
 
 class EBSMountConf(ConfFile):
     CONF_FILE = '/etc/ebsmount.conf'
@@ -25,7 +26,8 @@ config = EBSMountConf()
 
 
 def log(devname, s):
-    entry = "%s: %s" % (devname, s)
+    tt = strftime("%Y-%m-%d %H:%M:%S +0000", gmtime())
+    entry = "%s: %s: %s" % (tt, devname, s)
     file(config.logfile, 'a').write(entry + "\n")
     print entry
 
