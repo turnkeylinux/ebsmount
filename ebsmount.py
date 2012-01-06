@@ -25,6 +25,7 @@ from utils import config, log, is_mounted, mount
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
 
+    log(devname, 'added')
     matching_devices = []
     for device in udevdb.query():
         if device.name.startswith(basename(devname)):
@@ -32,26 +33,32 @@ def ebsmount_add(devname, mountdir):
 
     for device in matching_devices:
         devpath = join('/dev', device.name)
-        mountpath = join(mountdir, device.env.get('ID_FS_UUID', devpath[-1])[:6])
+        mountpath = join(mountdir, 
+                         device.env.get('ID_FS_UUID', devpath[-1])[:6])
         mountoptions = ",".join(config.mountoptions.split())
         hookspath = join(mountpath, ".ebsmount")
-
+        # alternative below made some sense but gave up masses of flexibility
+        #hookspath = join(split(mountpath)[0], '.ebsmount')  
         filesystem = device.env.get('ID_FS_TYPE', None)
         if not filesystem:
             log(devname, "could not identify filesystem: %s" % devpath)
             continue
 
         if not filesystem in config.filesystems.split():
-            log(devname, "filesystem (%s) not supported: %s" % (filesystem,devpath))
+            log(devname, "filesystem (%s) not supported: %s" %
+              (filesystem, devpath))
             continue
 
         if is_mounted(devpath):
             log(devname, "already mounted: %s" % devpath)
             continue
 
+        log(devname, "mounting %s %s (%s)" % 
+          (devpath, mountpath, mountoptions))
         mount(devpath, mountpath, mountoptions)
         log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
 
+        log(devname, 'hookspath: %s' % hookspath)
         if exists(hookspath):
             hooks = os.listdir(hookspath)
             hooks.sort()
@@ -66,18 +73,22 @@ def ebsmount_add(devname, mountdir):
                     log(devname, "skipping hook: '%s', not executable" % file)
                     continue
 
-                if not os.stat(fpath).st_uid == 0 or not os.stat(fpath).st_gid == 0:
-                    log(devname, "skipping hook: '%s', not owned root:root" % file)
+                if not os.stat(fpath).st_uid == 0 or not\
+                  os.stat(fpath).st_gid == 0:
+                    log(devname, "skipping hook: '%s', not owned root:root" % 
+                      file)
                     continue
 
                 log(devname, "executing hook: %s" % file)
                 os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
                 os.environ['MOUNTPOINT'] = mountpath
-                system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, config.logfile))
+                system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % 
+                  (fpath, config.logfile))
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
 
+    log(devname, 'removed')
     mounted = False
     for d in os.listdir(mountdir):
         path = join(mountdir, d)

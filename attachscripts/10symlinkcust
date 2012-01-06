@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+target=/cust
+mountp=$MOUNTPOINT
+atticdir=/.cust_attic
+
+echo linking $mountp to $target, putting clashes in $atticdir
+
+if [ -h $target ] 
+then
+  echo moving old cust symlink to $atticdir for debugging
+
+  #ensure an attic is available
+  mkdir -p ${atticdir}
+  datestamp=`date -u +%F_%H:%M:%S_+0_`
+  newname=${atticdir}/${datestamp}_`echo ${target} | sed -e 's/\//_/'`
+  echo moving ${target} to ${newname}
+  mv ${target} ${newname}
+fi
+
+ln -s ${mountp} ${target}
+
