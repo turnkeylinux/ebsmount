@@ -32,6 +32,7 @@ Environment variables (Eucalyptus):
 
 """
 
+import re
 import os
 import sys
 
@@ -51,8 +52,8 @@ def fatal(s):
     sys.exit(1)
 
 def _expected_devpath(devpath, devpaths):
-    for s in devpaths:
-        if devpath.startswith(s):
+    for pattern in devpaths:
+        if re.search(pattern, devpath):
             return True
 
     return False

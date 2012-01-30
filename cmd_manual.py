@@ -25,6 +25,7 @@ Options:
     --format=FS     Format device prior to mount (e.g., --format=ext3)
 """
 
+import re
 import os
 import sys
 import getopt
@@ -51,9 +52,12 @@ def _expected_devpath(devname, devpaths):
 
     for line in raw_output.splitlines():
         line = line.strip()
-        for devpath in devpaths:
-            if line.startswith("looking at parent device '%s" % devpath):
-                return True
+        m = re.match("^looking at parent device '(.*)':", line)
+        if m:
+            devpath = m.group(1)
+            for pattern in devpaths:
+                if re.search(pattern, devpath):
+                    return True
 
     return False
 
