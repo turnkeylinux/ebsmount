@@ -18,7 +18,7 @@
 
 Arguments:
 
-    device          EBS device to mount (e.g., /dev/sdf, /dev/vda)
+    device          EBS device to mount (e.g., /dev/xvdf, /dev/vda)
 
 Options:
 

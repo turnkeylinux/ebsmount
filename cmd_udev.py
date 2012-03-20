@@ -22,7 +22,7 @@ Arguments:
 
 Environment variables (Amazon EC2):
 
-    DEVNAME         (required: e.g., /dev/sdf)
+    DEVNAME         (required: e.g., /dev/xvdf)
     PHYSDEVPATH     (required: e.g., /devices/xen/vbd-2160)
 
 Environment variables (Eucalyptus):
