@@ -1,0 +1,19 @@
+From: Roy Liu <carsomyr@gmail.com>
+Date: Wed, 28 Nov 2012 23:24:47 -0500
+Subject: Remove the generated 85-ebsmount.rules file in the Makefile clean
+ target
+
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index ae1166c..0b62581 100644
+--- a/Makefile
++++ b/Makefile
+@@ -77,3 +77,4 @@ uninstall:
+ # target: clean
+ clean:
+ 	rm -f *.pyc *.pyo *.rules _$(progname)
++	rm -f -- 85-ebsmount.rules
+-- 
