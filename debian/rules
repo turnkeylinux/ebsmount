@@ -5,14 +5,32 @@ buildroot=debian/$(progname)
 prefix=$(buildroot)/usr
 
 clean:
+
+	rm -f -- build-indep-stamp build-arch-stamp
+	$(MAKE) -- clean
+
 	dh_clean
 
-build:
+build: build-indep build-arch
 	mkdir -p $(prefix)
+
+build-indep: build-indep-stamp
+build-indep-stamp:
+
+	dh_testdir
+
+	touch -- $@
+
+build-arch: build-arch-stamp
+build-arch-stamp:
+
+	dh_testdir
+
+	touch -- $@
 
 install: 
 	dh_testroot
-	dh_clean -k
+	dh_clean
 	dh_testdir
 	dh_installdirs
 	dh_install
@@ -22,9 +40,11 @@ install:
 binary-indep: install
 	dh_testdir
 	dh_testroot
+	dh_installdebconf
 	dh_installdocs docs/
 	dh_installman man/ebsmount-manual.1 man/ebsmount-udev.8
 	dh_installchangelogs
+	dh_lintian
 	dh_compress
 	dh_installdeb
 	dh_gencontrol
@@ -34,4 +54,4 @@ binary-indep: install
 binary-arch: install
 
 binary: binary-indep binary-arch
-.PHONY: clean binary-indep binary-arch binary install
+.PHONY: clean build build-indep build-arch binary-indep binary-arch binary install
