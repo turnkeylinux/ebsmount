@@ -1,5 +1,7 @@
-ebsmount (0.94+3-0ubuntu1) precise; urgency=low
+ebsmount (0.94+3-0ubuntu4) precise; urgency=low
 
+  * Add the patch 0004: Change the range of virtual block devices detected by
+    udev from xv[f-p] to xv[a-z].
   * Import the work of Ubuntu maintainers Scott Moser (smoser@ubuntu.com) and
     Logan Rosen (logatronico@gmail.com).
 
