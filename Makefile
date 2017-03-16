@@ -56,9 +56,9 @@ install: 85-ebsmount.rules
 	@echo 
 
 	install -d $(PATH_BIN) $(PATH_ETC) $(PATH_INSTALL_LIB) $(PATH_UDEV_RULES)
-	cp *.conf $(PATH_ETC)
-	cp *.py $(PATH_INSTALL_LIB)
-	cp *.rules $(PATH_UDEV_RULES)
+	install -t $(PATH_ETC) -- *.conf
+	install -t $(PATH_INSTALL_LIB) -- *.py
+	install -t $(PATH_UDEV_RULES) -- *.rules
 
 	$(call with-py-executables, \
 	  ln -fs $(call libpath, $$module) $(PATH_BIN)/$(progname), \
@@ -77,3 +77,4 @@ uninstall:
 # target: clean
 clean:
 	rm -f *.pyc *.pyo *.rules _$(progname)
+	rm -f -- 85-ebsmount.rules

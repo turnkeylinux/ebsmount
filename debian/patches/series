@@ -1,4 +1,0 @@
-0001-Remove-the-turnkey-pylib-dependency-by-adding-the-re.patch
-0002-Remove-the-generated-85-ebsmount.rules-file-in-the-M.patch
-0003-Change-the-Makefile-to-use-install-in-the-place-of-c.patch
-0004-Change-the-range-of-virtual-block-devices-detected-b.patch
