@@ -3,7 +3,7 @@ Section: misc
 Priority: optional
 Maintainer: Roy Liu <carsomyr@gmail.com>
 Build-Depends: debhelper, po-debconf
-Standards-Version: 3.9.3
+Standards-Version: 3.9.8
 Homepage: https://github.com/turnkeylinux/ebsmount
 
 Package: ebsmount

@@ -7,6 +7,7 @@ PATH_BIN = $(prefix)/bin
 PATH_ETC = $(destdir)/etc
 PATH_INSTALL_LIB = $(prefix)/lib/$(progname)
 PATH_UDEV_RULES = $(destdir)/lib/udev/rules.d
+PATH_SYSTEMD_SERVICE = $(destdir)/lib/systemd/system
 
 all: help
 
@@ -45,20 +46,25 @@ define with-py-executables
 	fi;
 endef
 
-# set path bin in udev rules
+# Set the bin path in various templates.
+
 %.rules: %.rules.in
 	sed "s|@PATH_BIN@|$(call truepath,$(PATH_BIN))|g" $< > $@
 
+%.service: %.service.in
+	sed "s|@PATH_BIN@|$(call truepath,$(PATH_BIN))|g" $< > $@
+
 # target: install
-install: 85-ebsmount.rules
+install: 85-ebsmount.rules ebsmount@.service
 	@echo
 	@echo \*\* CONFIG: prefix = $(prefix) \*\*
 	@echo 
 
-	install -d $(PATH_BIN) $(PATH_ETC) $(PATH_INSTALL_LIB) $(PATH_UDEV_RULES)
-	install -t $(PATH_ETC) -- *.conf
-	install -t $(PATH_INSTALL_LIB) -- *.py
-	install -t $(PATH_UDEV_RULES) -- *.rules
+	install -d $(PATH_BIN) $(PATH_ETC) $(PATH_INSTALL_LIB) $(PATH_UDEV_RULES) $(PATH_SYSTEMD_SERVICE)
+	install -m 0644 -t $(PATH_ETC) -- *.conf
+	install -m 0755 -t $(PATH_INSTALL_LIB) -- *.py
+	install -m 0644 -t $(PATH_UDEV_RULES) -- *.rules
+	install -m 0644 -t $(PATH_SYSTEMD_SERVICE) -- *.service
 
 	$(call with-py-executables, \
 	  ln -fs $(call libpath, $$module) $(PATH_BIN)/$(progname), \
@@ -69,6 +75,7 @@ uninstall:
 	rm -rf $(PATH_INSTALL_LIB)
 	rm -f $(PATH_ETC)/ebsmount.conf
 	rm -f $(PATH_UDEV_RULES)/85-ebsmount.rules
+	rm -f $(PATH_SYSTEMD_SERVICE)/ebsmount@.service
 
 	$(call with-py-executables, \
 	  rm -f $(PATH_BIN)/$(progname), \
@@ -77,4 +84,4 @@ uninstall:
 # target: clean
 clean:
 	rm -f *.pyc *.pyo *.rules _$(progname)
-	rm -f -- 85-ebsmount.rules
+	rm -f -- 85-ebsmount.rules ebsmount@.service

@@ -1,3 +1,10 @@
+ebsmount (0.95) yakkety; urgency=low
+
+  * Update the `ebsmount-udev` script to work with systemd mount namespaces.
+  * Upgrade to Ubuntu Yakkety.
+
+ -- Roy Liu <carsomyr@gmail.com>  Tue, 14 Mar 2017 00:00:00 -0400
+
 ebsmount (0.94+3-0ubuntu4) precise; urgency=low
 
   * Add the patch 0004: Change the range of virtual block devices detected by

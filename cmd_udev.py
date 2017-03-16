@@ -23,12 +23,10 @@ Arguments:
 Environment variables (Amazon EC2):
 
     DEVNAME         (required: e.g., /dev/xvdf)
-    PHYSDEVPATH     (required: e.g., /devices/xen/vbd-2160)
 
 Environment variables (Eucalyptus):
 
     DEVNAME         (required: e.g., /dev/vda)
-    DEVPATH         (required: e.g., /devices/virtio-pci/virtio0/block/vda)
 
 """
 
@@ -51,13 +49,6 @@ def fatal(s):
     print >> sys.stderr, "error: " + str(s)
     sys.exit(1)
 
-def _expected_devpath(devpath, devpaths):
-    for pattern in devpaths:
-        if re.search(pattern, devpath):
-            return True
-
-    return False
-
 def main():
     if not len(sys.argv) == 2:
         usage()
@@ -67,19 +58,12 @@ def main():
 
     action = sys.argv[1]
     devname = os.getenv('DEVNAME', None)
-    devpath = os.getenv('PHYSDEVPATH', os.getenv('DEVPATH', None))
 
     if not action in ('add', 'remove'):
         usage('action must be one of: add, remove')
 
     if not devname:
         usage('DEVNAME is required')
-
-    if not devpath:
-        usage('PHYSDEVPATH or DEVPATH is required')
-
-    if not _expected_devpath(devpath, config.devpaths.split()):
-        usage('PHYSDEVPATH/DEVPATH is not of the expected structure')
 
     # log trigger
     log(devname, "received %s trigger" % action)

@@ -1,0 +1,10 @@
+[Unit]
+Description=ebsmount for %i
+[Service]
+Type=oneshot
+RemainAfterExit=true
+Environment="DEVNAME=%i"
+ExecStart=@PATH_BIN@/ebsmount-udev add
+ExecStop=@PATH_BIN@/ebsmount-udev remove
+# Very important: Expose mounted volumes to other processes.
+MountFlags=shared

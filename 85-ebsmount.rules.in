@@ -1,8 +1,8 @@
-# udev rules to trigger ebsmount-udev on ebs attach|detach
+# udev rules to trigger the ebsmount systemd service.
 
 # Amazon EC2
-KERNEL=="xvd[a-z]", SUBSYSTEM=="block", ATTRS{devtype}=="vbd", ACTION=="add", RUN+="@PATH_BIN@/ebsmount-udev add"
-KERNEL=="xvd[a-z]", SUBSYSTEM=="block", ACTION=="remove", RUN+="@PATH_BIN@/ebsmount-udev remove"
+KERNEL=="xvd[a-z]", SUBSYSTEM=="block", ATTRS{devtype}=="vbd", ACTION=="add", RUN+="/usr/sbin/service ebsmount@%k start"
+KERNEL=="xvd[a-z]", SUBSYSTEM=="block", ACTION=="remove", RUN+="/usr/sbin/service ebsmount@%k stop"
 
 # Eucalyptus / OpenStack
 KERNEL=="vd[a-z]*", SUBSYSTEM=="block", ACTION=="add", RUN+="@PATH_BIN@/ebsmount-udev add"
