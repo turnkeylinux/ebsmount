@@ -2,15 +2,18 @@ Source: ebsmount
 Section: misc
 Priority: optional
 Maintainer: Alon Swartz <alon@turnkeylinux.org>
-Build-Depends: debhelper (>> 4.2.0)
+Build-Depends:
+ debhelper (>> 4.2.0),
 Standards-Version: 3.6.1
 
 Package: ebsmount
 Architecture: any
-Depends: python (>= 2.4), udev, turnkey-pylib
+Depends:
+ python (>= 2.4),
+ turnkey-pylib,
+ udev,
 Section: misc
 Description: Automatically mount EC2/Eucalyptus EBS devices
  Automatically mounts EBS (Elastic Block Storage) devices when they are
  attached, supports formatted devices as well as partitions, uniquely
  identifiable mount points, and hooking scripts execution upon mount.
-
