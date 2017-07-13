@@ -9,6 +9,7 @@ Standards-Version: 4.0.0
 Package: ebsmount
 Architecture: any
 Depends:
+ ${misc:Depends},
  python (>= 2.4),
  turnkey-pylib,
  udev,
