@@ -1,37 +1,9 @@
 #! /usr/bin/make -f
 
-progname=$(shell awk '/^Source/ {print $$2}' debian/control)
-buildroot=debian/$(progname)
-prefix=$(buildroot)/usr
+include /usr/share/dpkg/pkg-info.mk
 
-clean:
-	dh_clean
+%:
+	dh $@ --with python2
 
-build:
-	mkdir -p $(prefix)
-
-install: 
-	dh_testroot
-	dh_clean -k
-	dh_testdir
-	dh_installdirs
-	dh_install
-	$(MAKE) install prefix=$(prefix) destdir=$(buildroot)
-	dh_link
-
-binary-indep: install
-	dh_testdir
-	dh_testroot
-	dh_installdocs docs/
-	dh_installman man/ebsmount-manual.1 man/ebsmount-udev.8
-	dh_installchangelogs
-	dh_compress
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary-arch: install
-
-binary: binary-indep binary-arch
-.PHONY: clean binary-indep binary-arch binary install
+override_dh_auto_install:
+	dh_auto_install -- prefix=debian/$(DEB_SOURCE)/usr destdir=debian/$(DEB_SOURCE)
