@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Alon Swartz <alon@turnkeylinux.org>
 Build-Depends:
  debhelper (>> 4.2.0),
-Standards-Version: 3.6.1
+Standards-Version: 4.0.0
 
 Package: ebsmount
 Architecture: any
