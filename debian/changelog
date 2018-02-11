@@ -1,3 +1,10 @@
+ebsmount (0.96) artful; urgency=low
+
+  * Change the device name detection pattern in `85-ebsmount.rules.in` to `KERNEL=="xvd[a-z]|nvme[0-26]n[0-26]"`.
+  * Upgrade to Ubuntu Artful.
+
+ -- Roy Liu <carsomyr@gmail.com>  Sat, 10 Feb 2018 00:00:00 -0400
+
 ebsmount (0.95) yakkety; urgency=low
 
   * Update the `ebsmount-udev` script to work with systemd mount namespaces.
