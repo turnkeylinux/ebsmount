@@ -1,0 +1,2 @@
+/usr/lib/ebsmount/cmd_manual.py /usr/bin/ebsmount-manual
+/usr/lib/ebsmount/cmd_udev.py   /usr/bin/ebsmount-udev
