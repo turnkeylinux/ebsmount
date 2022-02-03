@@ -4,7 +4,7 @@
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -15,16 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""EBS Mount - manually mount EBS device (simulates udev add trigger)
-
-Arguments:
-
-    device          EBS device to mount (e.g., /dev/xvdf, /dev/vda)
-
-Options:
-
-    --format=FS     Format device prior to mount (e.g., --format=ext3)
-"""
+"""EBS Mount - manually mount EBS device (simulates udev add trigger)"""
 
 import re
 import os
@@ -61,7 +52,8 @@ def _expected_devpath(devname, devpaths):
 def main():
     parser = argparse.ArgumentParser(
         prog='ebsmount-manual',
-        description="manually mount EBS device (simulates udev add trigger)"
+        description=("EBS Mount - manually mount EBS device"
+                     " (simulates udev add trigger)")
     )
     parser.add_argument(
         'devname',
@@ -70,7 +62,7 @@ def main():
     )
     parser.add_argument(
         '--format',
-        dest="filesystem"
+        dest="filesystem",
         nargs='?',
         default=None,
         choices=["ext2", "ext3", "ext4"],
@@ -89,7 +81,7 @@ def main():
         if is_mounted(devname):
             raise argparse.ArgumentTypeError(f"{devname} is mounted")
 
-        if not filesystem in config.filesystems.split():
+        if filesystem not in config.filesystems.split():
             raise argparse.ArgumentTypeError(
                     f"{filesystem} is not supported in {config.CONF_FILE}")
 
@@ -100,5 +92,6 @@ def main():
 
     ebsmount.ebsmount_add(devname, config.mountdir)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()
