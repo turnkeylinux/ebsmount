@@ -36,14 +36,14 @@ from utils import config, is_mounted
 
 def usage(e=None):
     if e:
-        print >> sys.stderr, "error: " + str(e)
+        print("error: " + str(e), file=sys.stderr)
 
-    print >> sys.stderr, "Syntax: %s [-opts] <device>" % sys.argv[0]
-    print >> sys.stderr, __doc__.strip()
+    print("Syntax: %s [-opts] <device>" % sys.argv[0], file=sys.stderr)
+    print(__doc__.strip(), file=sys.stderr)
     sys.exit(1)
 
 def fatal(s):
-    print >> sys.stderr, "error: " + str(s)
+    print("error: " + str(s), file=sys.stderr)
     sys.exit(1)
 
 def _expected_devpath(devname, devpaths):
@@ -64,7 +64,7 @@ def _expected_devpath(devname, devpaths):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], 'h', ['format='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     filesystem = None

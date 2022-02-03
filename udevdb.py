@@ -50,7 +50,7 @@ class Device:
                 self.env[name] = val.lstrip("=")
 
     def _get_volinfo(self):
-        if self.env.has_key('DEVTYPE') and self.env['DEVTYPE'] == 'disk':
+        if 'DEVTYPE' in self.env and self.env['DEVTYPE'] == 'disk':
             try:
                 volume_info = getoutput('vol_id /dev/%s' % self.name)
             except ExecError:
@@ -58,7 +58,7 @@ class Device:
 
             for value in volume_info.splitlines():
                 name, val = value.split("=")
-                if self.env.has_key(name):
+                if name in self.env:
                     continue
 
                 if not val:
@@ -87,16 +87,16 @@ def _disk_devices():
     """debug/test method to print disk devices"""
     devices = query()
     for dev in devices:
-        if dev.env.has_key('DEVTYPE') and dev.env['DEVTYPE'] == 'disk':
-            print '/dev/' + dev.name
+        if 'DEVTYPE' in dev.env and dev.env['DEVTYPE'] == 'disk':
+            print('/dev/' + dev.name)
 
-            attrs = dev.env.keys()
+            attrs = list(dev.env.keys())
             attrs.sort()
             column_len = max([ len(attr) + 1 for attr in attrs ])
             for attr in attrs:
                 name = attr + ":"
-                print "  %s %s" % (name.ljust(column_len), dev.env[attr])
-            print
+                print("  %s %s" % (name.ljust(column_len), dev.env[attr]))
+            print()
 
 def main():
    _disk_devices()    #used in debugging/testing

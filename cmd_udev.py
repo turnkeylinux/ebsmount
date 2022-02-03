@@ -41,14 +41,14 @@ from utils import log, config
 
 def usage(e=None):
     if e:
-        print >> sys.stderr, "error: " + str(e)
+        print("error: " + str(e), file=sys.stderr)
 
-    print >> sys.stderr, "Syntax: %s <action>" % sys.argv[0]
-    print >> sys.stderr, __doc__.strip()
+    print("Syntax: %s <action>" % sys.argv[0], file=sys.stderr)
+    print(__doc__.strip(), file=sys.stderr)
     sys.exit(1)
 
 def fatal(s):
-    print >> sys.stderr, "error: " + str(s)
+    print("error: " + str(s), file=sys.stderr)
     sys.exit(1)
 
 def _expected_devpath(devpath, devpaths):

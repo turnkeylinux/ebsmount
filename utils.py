@@ -27,9 +27,9 @@ config = EBSMountConf()
 def log(devname, s):
     entry = "%s: %s" % (devname, s)
     file(config.logfile, 'a').write(entry + "\n")
-    print entry
+    print(entry)
 
-def mkdir_parents(path, mode=0777):
+def mkdir_parents(path, mode=0o777):
     """mkdir 'path' recursively (I.e., equivalent to mkdir -p)"""
     dirs = path.split("/")
     for i in range(2, len(dirs) + 1):
