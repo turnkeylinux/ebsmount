@@ -25,7 +25,7 @@ Environment variables (Amazon EC2):
     DEVNAME         (required: e.g., /dev/xvdf)
     PHYSDEVPATH     (required: e.g., /devices/xen/vbd-2160)
 
-Environment variables (Eucalyptus):
+Environment variables (OpenStack):
 
     DEVNAME         (required: e.g., /dev/vda)
     DEVPATH         (required: e.g., /devices/virtio-pci/virtio0/block/vda)

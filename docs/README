@@ -1,4 +1,4 @@
-EBSmount: Automatically mount EC2/Eucalyptus EBS devices
+EBSmount: Automatically mount EC2/OpenStack EBS devices
 ========================================================
 
 EBSmount has 2 commands:
@@ -8,7 +8,7 @@ EBSmount has 2 commands:
 
 Features:
 
-    - Supports Amazon EC2 and Eucalyptus EBS devices
+    - Supports Amazon EC2 and OpenStack EBS devices
     - Automatically mounts EBS devices when they are attached (via udev)
     - Supports formatted devices, as well as partitions
     - Ignores unformatted devices and unsupported filesystems

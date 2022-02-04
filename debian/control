@@ -14,7 +14,7 @@ Depends:
  ${misc:Depends},
  ${python3:Depends},
  udev,
-Description: Automatically mount EC2/Eucalyptus EBS devices
+Description: Automatically mount EC2/OpenStack EBS devices
  Automatically mounts EBS (Elastic Block Storage) devices when they are
  attached, supports formatted devices as well as partitions, uniquely
  identifiable mount points, and hooking scripts execution upon mount.
