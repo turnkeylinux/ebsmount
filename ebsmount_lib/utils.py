@@ -1,8 +1,9 @@
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,20 +15,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import executil
+import subprocess
+
 from conffile import ConfFile
+
 
 class EBSMountConf(ConfFile):
     CONF_FILE = '/etc/ebsmount.conf'
-    REQUIRED = ['enabled', 'runhooks', 'mountdir', 'mountoptions', 'filesystems', 'logfile', 'devpaths']
+    REQUIRED = ['enabled', 'runhooks', 'mountdir', 'mountoptions',
+                'filesystems', 'logfile', 'devpaths']
+
 
 config = EBSMountConf()
 
 
 def log(devname, s):
-    entry = "%s: %s" % (devname, s)
+    entry = f"{devname}: {s}"
     file(config.logfile, 'a').write(entry + "\n")
     print(entry)
+
 
 def mkdir_parents(path, mode=0o777):
     """mkdir 'path' recursively (I.e., equivalent to mkdir -p)"""
@@ -39,20 +45,22 @@ def mkdir_parents(path, mode=0o777):
 
         os.mkdir(dir, mode)
 
+
 def is_mounted(path):
     """test if path is mounted"""
-    mounts = file("/proc/mounts").read()
+    with open("/proc/mounts") as fob:
+        mounts = fob.read()
     if mounts.find(path) != -1:
         return True
     return False
 
-def mount(devpath, mountpath, options=None):
+
+def mount(devpath, mountpath, options=[]):
     """mount devpath to mountpath with specified options (creates mountpath)"""
     if not os.path.exists(mountpath):
         mkdir_parents(mountpath)
 
     if options:
-        executil.system("mount", "-o", options, devpath, mountpath)
+        subprocess(["mount", "-o", *options, devpath, mountpath])
     else:
-        executil.system("mount", devpath, mountpath)
-
+        subprocess(["mount", devpath, mountpath])

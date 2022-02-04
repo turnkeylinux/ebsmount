@@ -1,8 +1,9 @@
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -13,7 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from executil import ExecError, getoutput
+import subprocess
+from subprocess import PIPE, STDOUT
+
 
 class Device:
     """class to hold device information enumerated from udev database"""
@@ -51,10 +54,11 @@ class Device:
 
     def _get_volinfo(self):
         if 'DEVTYPE' in self.env and self.env['DEVTYPE'] == 'disk':
-            try:
-                volume_info = getoutput('vol_id /dev/%s' % self.name)
-            except ExecError:
+            proc = subprocess(["vol_id", f"/dev/{self.name}"],
+                              capture_output=True, text=True)
+            if proc.returncode != 0:
                 return
+            volume_info = proc.stdout
 
             for value in volume_info.splitlines():
                 name, val = value.split("=")
@@ -66,23 +70,25 @@ class Device:
 
                 self.env[name] = val
 
+
 def query(device=None, volinfo=True):
     """query udev database and return device(s) information
        if no device is specified, all devices will be returned
        optionally query volume info (vol_id) on disk devices
     """
     if device:
-        cmd = "udevadm info --query all --name %s" % device
+        cmd = ["udevadm", "info", "--query", "all", "--name", device]
     else:
-        cmd = "udevadm info --export-db"
+        cmd = ["udevadm", "info", "--export-db"]
 
     devices = []
-    for s in getoutput(cmd + " 2>/dev/null").split('\n\n'):
+    output = subprocess(cmd, stdout=PIPE, stderr=STDOUT, test=True).stdout
+    for s in output.split('\n\n'):
         devices.append(Device(s, volinfo))
 
     return devices
-    
-    
+
+
 def _disk_devices():
     """debug/test method to print disk devices"""
     devices = query()
@@ -92,15 +98,8 @@ def _disk_devices():
 
             attrs = list(dev.env.keys())
             attrs.sort()
-            column_len = max([ len(attr) + 1 for attr in attrs ])
+            column_len = max([len(attr) + 1 for attr in attrs])
             for attr in attrs:
                 name = attr + ":"
-                print("  %s %s" % (name.ljust(column_len), dev.env[attr]))
+                print(f"  {name.ljust(column_len)} {dev.env[attr}")
             print()
-
-def main():
-   _disk_devices()    #used in debugging/testing
-
-if __name__ == '__main__':
-    main()
-
