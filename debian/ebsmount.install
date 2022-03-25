@@ -1,4 +1,2 @@
 conf/85-ebsmount.rules  usr/lib/udev/rules.d/
 conf/*.conf             etc/
-cmd_manual.py           usr/lib/ebsmount/
-cmd_udev.py             usr/lib/ebsmount/

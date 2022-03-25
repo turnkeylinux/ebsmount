@@ -1,3 +1,2 @@
-lib/systemd/system/ebsmount@.service etc/systemd/system/ebsmount@.service
-/usr/lib/ebsmount/cmd_manual.py /usr/bin/ebsmount-manual
-/usr/lib/ebsmount/cmd_udev.py   /usr/bin/ebsmount-udev
+usr/bin/ebsmount_manual.py usr/bin/ebsmount-manual
+usr/bin/ebsmount_udev.py   usr/bin/ebsmount-udev

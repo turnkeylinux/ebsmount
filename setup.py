@@ -4,10 +4,10 @@ from distutils.core import setup
 
 setup(
     name="ebsmount",
-    version="0.95",
+    version="0.96+",
     author="Jeremy Davis",
     author_email="jeremy@turnkeylinux.org",
     url="https://github.com/turnkeylinux/ebsmount",
     packages=["ebsmount_lib"],
-    scripts=["cmd_manual.py", "cmd_udev.py"]
+    scripts=["ebsmount_manual.py", "ebsmount_udev.py"]
 )
