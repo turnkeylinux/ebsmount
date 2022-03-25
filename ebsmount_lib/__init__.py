@@ -1,8 +1,9 @@
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,43 +15,46 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from os.path import *
+# XXX TODO may need additional imports below (moving from importing *)
+from os.path import join
 
 import pwd
 
-import udevdb
-from executil import system
-from utils import config, log, is_mounted, mount
+from .udevdb import query
+from .utils import config, log, is_mounted, mount
+
 
 def ebsmount_add(devname, mountdir):
     """ebs device attached"""
 
     matching_devices = []
-    for device in udevdb.query():
+    for device in query():
         if device.name.startswith(basename(devname)):
             matching_devices.append(device)
 
     for device in matching_devices:
         devpath = join('/dev', device.name)
-        mountpath = join(mountdir, device.env.get('ID_FS_UUID', devpath[-1])[:6])
-        mountoptions = ",".join(config.mountoptions.split())
+        mountpath = join(mountdir, device.env.get(
+            'ID_FS_UUID', devpath[-1])[:6])
+        mountoptions = mountoptions.split()
         hookspath = join(mountpath, ".ebsmount")
 
         filesystem = device.env.get('ID_FS_TYPE', None)
         if not filesystem:
-            log(devname, "could not identify filesystem: %s" % devpath)
+            log(devname, f"could not identify filesystem: {devpath}")
             continue
 
-        if not filesystem in config.filesystems.split():
-            log(devname, "filesystem (%s) not supported: %s" % (filesystem,devpath))
+        if filesystem not in config.filesystems.split():
+            log(devname,
+                f"filesystem ({filesystem}) not supported: {devpath}")
             continue
 
         if is_mounted(devpath):
-            log(devname, "already mounted: %s" % devpath)
+            log(devname, f"already mounted: {devpath}")
             continue
 
         mount(devpath, mountpath, mountoptions)
-        log(devname, "mounted %s %s (%s)" % (devpath, mountpath, mountoptions))
+        log(devname, f"mounted {devpath} {mountpath} ({mountoptions})")
 
         if exists(hookspath):
             hooks = os.listdir(hookspath)
@@ -63,17 +67,21 @@ def ebsmount_add(devname, mountdir):
             for file in hooks:
                 fpath = join(hookspath, file)
                 if not os.access(fpath, os.X_OK):
-                    log(devname, "skipping hook: '%s', not executable" % file)
+                    log(devname, f"skipping hook: '{file}', not executable")
                     continue
 
-                if not os.stat(fpath).st_uid == 0 or not os.stat(fpath).st_gid == 0:
-                    log(devname, "skipping hook: '%s', not owned root:root" % file)
+                if (not os.stat(fpath).st_uid == 0 or
+                        not os.stat(fpath).st_gid == 0):
+                    log(devname,
+                        f"skipping hook: '{file}', not owned root:root")
                     continue
 
-                log(devname, "executing hook: %s" % file)
+                log(devname, f"executing hook: {file}")
                 os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
                 os.environ['MOUNTPOINT'] = mountpath
+                # XXX TODO - this command needs porting to subprocess!
                 system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, config.logfile))
+
 
 def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
@@ -89,4 +97,3 @@ def ebsmount_remove(devname, mountdir):
 
     if not mounted:
         os.rmdir(mountdir)
-

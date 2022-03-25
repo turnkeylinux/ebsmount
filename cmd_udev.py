@@ -1,9 +1,10 @@
-#!/usr/bin/python
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+#!/usr/bin/python3
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,63 +15,78 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""EBS Mount - triggered by udev on EBS attach and detach
-
-Arguments:
-
-    action          action trigger (add | remove)
-
-Environment variables (Amazon EC2):
-
-    DEVNAME         (required: e.g., /dev/xvdf)
-
-Environment variables (Eucalyptus):
-
-    DEVNAME         (required: e.g., /dev/vda)
-
-"""
+"""EBS Mount - triggered by udev on EBS attach and detach"""
 
 import re
 import os
 import sys
+import argparse
 
-import ebsmount
-from utils import log, config
+import ebsmount_lib as ebsmount
+from ebsmount_lib.utils import log, config
 
-def usage(e=None):
-    if e:
-        print >> sys.stderr, "error: " + str(e)
+ENVVARS = """
+environment variables (required):
 
-    print >> sys.stderr, "Syntax: %s <action>" % sys.argv[0]
-    print >> sys.stderr, __doc__.strip()
-    sys.exit(1)
+platfrom    env var         example value
+--------    -------         -------------
+AWS EC2     DEVNAME         /dev/xvdf
+            PHYSDEVPATH     /devices/vbd-51792/block/xvdf
+
+OpenStack   DEVNAME         /dev/vda
+            DEVPATH         /devices/virtio-pci/virtio0/block/vda
+"""
+
 
 def fatal(s):
-    print >> sys.stderr, "error: " + str(s)
+    print("error: " + str(s), file=sys.stderr)
     sys.exit(1)
 
+
+def _expected_devpath(devpath, devpaths):
+    for pattern in devpaths:
+        if re.search(pattern, devpath):
+            return True
+
+    return False
+
+
 def main():
-    if not len(sys.argv) == 2:
-        usage()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog='ebsmount-udev',
+        description="EBS Mount - triggered by udev on EBS attach and detach",
+        epilog=ENVVARS
+    )
+    parser.add_argument(
+        'action',
+        nargs=1,
+        choices=["add", "remove"],
+        help="action trigger"
+    )
+    args = parser.parse_args()
 
     if not config.enabled.lower() == "true":
-        fatal('ebsmount is not enabled (%s)' % config.CONF_FILE)
+        fatal(f'ebsmount is not enabled ({config.CONF_FILE})')
 
-    action = sys.argv[1]
     devname = os.getenv('DEVNAME', None)
 
-    if not action in ('add', 'remove'):
-        usage('action must be one of: add, remove')
-
     if not devname:
-        usage('DEVNAME is required')
+        raise argparse.ArgumentTypeError('DEVNAME is required')
+
+    if not devpath:
+        raise argparse.ArgumentTypeError('PHYSDEVPATH or DEVPATH is required')
+
+    if not _expected_devpath(devpath, config.devpaths.split()):
+        raise argparse.ArgumentTypeError(
+                'PHYSDEVPATH/DEVPATH is not of the expected structure')
 
     # log trigger
-    log(devname, "received %s trigger" % action)
+    log(devname, f"received {args.action} trigger")
 
-    func = getattr(ebsmount, 'ebsmount_' + action)
+    func = getattr(ebsmount, 'ebsmount_' + args.action)
     func(devname, config.mountdir)
 
-if __name__=="__main__":
-    main()
 
+if __name__ == "__main__":
+    main()

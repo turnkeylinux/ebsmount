@@ -1,9 +1,10 @@
-#!/usr/bin/python
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+#!/usr/bin/python3
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,37 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""EBS Mount - manually mount EBS device (simulates udev add trigger)
-
-Arguments:
-
-    device          EBS device to mount (e.g., /dev/xvdf, /dev/vda)
-
-Options:
-
-    --format=FS     Format device prior to mount (e.g., --format=ext3)
-"""
+"""EBS Mount - manually mount EBS device (simulates udev add trigger)"""
 
 import re
 import os
 import sys
-import getopt
+import argparse
+import subprocess
+from subprocess import PIPE, STDOUT
 
-import ebsmount
-import executil
-from utils import config, is_mounted
+import ebsmount_lib as ebsmount
+from ebsmount_lib.utils import config, is_mounted
 
-def usage(e=None):
-    if e:
-        print >> sys.stderr, "error: " + str(e)
-
-    print >> sys.stderr, "Syntax: %s [-opts] <device>" % sys.argv[0]
-    print >> sys.stderr, __doc__.strip()
-    sys.exit(1)
 
 def fatal(s):
-    print >> sys.stderr, "error: " + str(s)
+    print("error: " + str(s), file=sys.stderr)
     sys.exit(1)
+
 
 def _expected_devpath(devname, devpaths):
     """ugly hack to test expected structure of devpath"""
@@ -61,41 +48,50 @@ def _expected_devpath(devname, devpaths):
 
     return False
 
+
 def main():
-    try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], 'h', ['format='])
-    except getopt.GetoptError, e:
-        usage(e)
-
-    filesystem = None
-    for opt, val in opts:
-        if opt == '-h':
-            usage()
-
-        if opt == '--format':
-            filesystem = val
-
-    if not len(args) == 1:
-        usage()
-
-    devname = args[0]
-    if not os.path.exists(devname):
-        fatal("%s does not exist" % devname)
+    parser = argparse.ArgumentParser(
+        prog='ebsmount-manual',
+        description=("EBS Mount - manually mount EBS device"
+                     " (simulates udev add trigger)")
+    )
+    parser.add_argument(
+        'devname',
+        nargs=1,
+        help="EBS device to mount (e.g., /dev/xvdf, /dev/vda)"
+    )
+    parser.add_argument(
+        '--format',
+        dest="filesystem",
+        nargs='?',
+        default=None,
+        choices=["ext2", "ext3", "ext4"],
+        const="ext4",
+        help="Format device prior to mount (defaults to ext4 unless specified)"
+    )
+    args = parser.parse_args()
+    if not os.path.exists(args.devname):
+        raise argparse.ArgumentTypeError(f"{devname} does not exist")
 
     if not _expected_devpath(devname, config.devpaths.split()):
-        fatal("devpath not of expected structure, or failed lookup")
+        raise argparse.ArgumentTypeError(
+                "devpath not of expected structure, or failed lookup")
 
     if filesystem:
         if is_mounted(devname):
-            fatal("%s is mounted" % devname)
+            raise argparse.ArgumentTypeError(f"{devname} is mounted")
 
-        if not filesystem in config.filesystems.split():
-            fatal("%s is not supported in %s" % (filesystem, config.CONF_FILE))
+        if filesystem not in config.filesystems.split():
+            raise argparse.ArgumentTypeError(
+                    f"{filesystem} is not supported in {config.CONF_FILE}")
 
-        executil.system("mkfs." + filesystem, "-q", devname)
+        format_dev = subprocess([f"mkfs.{filesystem}", "-q", devname],
+                                stdout=PIPE, stderr=STDOUT, text=True)
+        if format_dev.returncode != 0:
+            fatal(f"formating {filesystem} failed: {format_dev.stdout}")
 
     ebsmount.ebsmount_add(devname, config.mountdir)
 
-if __name__=="__main__":
-    main()
 
+if __name__ == "__main__":
+    main()
