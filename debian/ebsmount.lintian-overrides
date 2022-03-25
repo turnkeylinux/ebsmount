@@ -1,0 +1,4 @@
+config-does-not-load-confmodule
+executable-not-elf-or-script
+hyphen-used-as-minus-sign
+postinst-does-not-load-confmodule

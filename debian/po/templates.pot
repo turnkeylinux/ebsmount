@@ -1,0 +1,33 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ebsmount\n"
+"Report-Msgid-Bugs-To: ebsmount@packages.debian.org\n"
+"POT-Creation-Date: 2012-11-28 00:00-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../ebsmount.templates:1001
+msgid "Enable hooks? Doing so may pose a security risk."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../ebsmount.templates:1001
+msgid ""
+"Hooks are the ebsmount package's way of having mounted volumes configure "
+"themselves (see `https://raw.github.com/turnkeylinux/ebsmount/master/docs/"
+"README')."
+msgstr ""

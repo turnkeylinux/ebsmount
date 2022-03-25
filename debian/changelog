@@ -1,0 +1,22 @@
+ebsmount (0.96) artful; urgency=low
+
+  * Change the device name detection pattern in `85-ebsmount.rules.in` to `KERNEL=="xvd[a-z]|nvme[0-26]n[0-26]"`.
+  * Upgrade to Ubuntu Artful.
+
+ -- Roy Liu <carsomyr@gmail.com>  Sat, 10 Feb 2018 00:00:00 -0400
+
+ebsmount (0.95) yakkety; urgency=low
+
+  * Update the `ebsmount-udev` script to work with systemd mount namespaces.
+  * Upgrade to Ubuntu Yakkety.
+
+ -- Roy Liu <carsomyr@gmail.com>  Tue, 14 Mar 2017 00:00:00 -0400
+
+ebsmount (0.94+3-0ubuntu4) precise; urgency=low
+
+  * Add the patch 0004: Change the range of virtual block devices detected by
+    udev from xv[f-p] to xv[a-z].
+  * Import the work of Ubuntu maintainers Scott Moser (smoser@ubuntu.com) and
+    Logan Rosen (logatronico@gmail.com).
+
+ -- Roy Liu <carsomyr@gmail.com>  Wed, 28 Nov 2012 00:00:00 -0500

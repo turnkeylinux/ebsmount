@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+
+source -- /usr/share/debconf/confmodule
+
+case "$1" in
+
+    configure|reconfigure)
+        db_get ebsmount/enable_hooks
+
+        case "$RET" in
+
+            true)
+                runhooks="True"
+                ;;
+
+            false)
+                runhooks="False"
+                ;;
+
+            *)
+                echo "Invalid configuration value." >&2
+                exit -- 1
+                ;;
+        esac
+
+        sed -i -E "s/^RUNHOOKS=.*\$/RUNHOOKS=${runhooks}/g" -- /etc/ebsmount.conf
+        ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+    *)
+        echo "postinst called with unknown argument \`${1}'." >&2
+        exit -- 1
+        ;;
+esac
+
+#DEBHELPER#
+
+db_stop
+
+exit -- 0
