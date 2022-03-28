@@ -54,7 +54,7 @@ class Device:
 
     def _get_volinfo(self):
         if 'DEVTYPE' in self.env and self.env['DEVTYPE'] == 'disk':
-            proc = subprocess.run(["vol_id", f"/dev/{self.name}"],
+            proc = subprocess.run(["blkid", '-o', 'udev', f"/dev/{self.name}"],
                                   capture_output=True, text=True)
             if proc.returncode != 0:
                 return
