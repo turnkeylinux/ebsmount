@@ -70,6 +70,7 @@ def main():
         fatal(f'ebsmount is not enabled ({config.CONF_FILE})')
 
     devname = os.getenv('DEVNAME', None)
+    devpath = os.getenv('PHYSDEVPATH', os.getenv('DEVPATH', None))
 
     if not devname:
         raise argparse.ArgumentTypeError('DEVNAME is required')
