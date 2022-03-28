@@ -54,8 +54,8 @@ class Device:
 
     def _get_volinfo(self):
         if 'DEVTYPE' in self.env and self.env['DEVTYPE'] == 'disk':
-            proc = subprocess(["vol_id", f"/dev/{self.name}"],
-                              capture_output=True, text=True)
+            proc = subprocess.run(["vol_id", f"/dev/{self.name}"],
+                                  capture_output=True, text=True)
             if proc.returncode != 0:
                 return
             volume_info = proc.stdout
@@ -82,7 +82,7 @@ def query(device=None, volinfo=True):
         cmd = ["udevadm", "info", "--export-db"]
 
     devices = []
-    output = subprocess(cmd, stdout=PIPE, stderr=STDOUT, test=True).stdout
+    output = subprocess.run(cmd, stdout=PIPE, stderr=STDOUT, text=True).stdout
     for s in output.split('\n\n'):
         devices.append(Device(s, volinfo))
 

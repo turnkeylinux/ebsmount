@@ -35,7 +35,9 @@ def fatal(s):
 
 def _expected_devpath(devname, devpaths):
     """ugly hack to test expected structure of devpath"""
-    raw_output = executil.getoutput('udevadm info -a -n %s' % devname)
+    raw_output = subprocess.run(['udevadm', 'info', '-a', '-n', devname],
+                                stderr=STDOUT, stdout=PIPE, text=True
+                               ).stdout
 
     for line in raw_output.splitlines():
         line = line.strip()
@@ -70,19 +72,21 @@ def main():
         help="Format device prior to mount (defaults to ext4 unless specified)"
     )
     args = parser.parse_args()
-    if not os.path.exists(args.devname):
-        raise argparse.ArgumentTypeError(f"{devname} does not exist")
+    devname = args.devname[0]
+    filesystem = args.filesystem
+    if not os.path.exists(devname):
+        raise parser.error(f"{devname} does not exist")
 
     if not _expected_devpath(devname, config.devpaths.split()):
-        raise argparse.ArgumentTypeError(
+        raise parser.error(
                 "devpath not of expected structure, or failed lookup")
 
     if filesystem:
         if is_mounted(devname):
-            raise argparse.ArgumentTypeError(f"{devname} is mounted")
+            raise parser.error(f"{devname} is mounted")
 
         if filesystem not in config.filesystems.split():
-            raise argparse.ArgumentTypeError(
+            raise parser.error(
                     f"{filesystem} is not supported in {config.CONF_FILE}")
 
         format_dev = subprocess([f"mkfs.{filesystem}", "-q", devname],
