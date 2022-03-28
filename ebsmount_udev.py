@@ -73,13 +73,13 @@ def main():
     devpath = os.getenv('PHYSDEVPATH', os.getenv('DEVPATH', None))
 
     if not devname:
-        raise argparse.ArgumentTypeError('DEVNAME is required')
+        raise parser.error('DEVNAME is required')
 
     if not devpath:
-        raise argparse.ArgumentTypeError('PHYSDEVPATH or DEVPATH is required')
+        raise parser.error('PHYSDEVPATH or DEVPATH is required')
 
     if not _expected_devpath(devpath, config.devpaths.split()):
-        raise argparse.ArgumentTypeError(
+        raise parser.error(
                 'PHYSDEVPATH/DEVPATH is not of the expected structure')
 
     # log trigger
