@@ -16,7 +16,7 @@
 
 import os
 # XXX TODO may need additional imports below (moving from importing *)
-from os.path import join
+from os.path import join, basename, exists
 
 import pwd
 
@@ -36,7 +36,7 @@ def ebsmount_add(devname, mountdir):
         devpath = join('/dev', device.name)
         mountpath = join(mountdir, device.env.get(
             'ID_FS_UUID', devpath[-1])[:6])
-        mountoptions = mountoptions.split()
+        mountoptions = " ".join(config.mountoptions.split())
         hookspath = join(mountpath, ".ebsmount")
 
         filesystem = device.env.get('ID_FS_TYPE', None)

@@ -16,6 +16,7 @@
 
 import os
 import subprocess
+from subprocess import PIPE, STDOUT
 
 from conffile import ConfFile
 
@@ -31,7 +32,8 @@ config = EBSMountConf()
 
 def log(devname, s):
     entry = f"{devname}: {s}"
-    file(config.logfile, 'a').write(entry + "\n")
+    with open(config.logfile, 'a') as fob:
+        fob.write(entry + "\n")
     print(entry)
 
 
@@ -55,12 +57,16 @@ def is_mounted(path):
     return False
 
 
-def mount(devpath, mountpath, options=[]):
+def mount(devpath, mountpath, options=''):
     """mount devpath to mountpath with specified options (creates mountpath)"""
     if not os.path.exists(mountpath):
         mkdir_parents(mountpath)
 
     if options:
-        subprocess(["mount", "-o", *options, devpath, mountpath])
+        proc = subprocess.run(["mount", "-o", options, devpath, mountpath],
+                              stderr=STDOUT, stdout=PIPE, text=True)
     else:
-        subprocess(["mount", devpath, mountpath])
+        proc = subprocess.run(["mount", devpath, mountpath],
+                              stderr=STDOUT, stdout=PIPE, text=True)
+    if proc.returncode != 0:
+        print(f'An error occurred when mounting:\n{proc.stdout}')

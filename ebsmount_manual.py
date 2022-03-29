@@ -89,8 +89,8 @@ def main():
             raise parser.error(
                     f"{filesystem} is not supported in {config.CONF_FILE}")
 
-        format_dev = subprocess([f"mkfs.{filesystem}", "-q", devname],
-                                stdout=PIPE, stderr=STDOUT, text=True)
+        format_dev = subprocess.run([f"mkfs.{filesystem}", "-q", devname],
+                                    stdout=PIPE, stderr=STDOUT, text=True)
         if format_dev.returncode != 0:
             fatal(f"formating {filesystem} failed: {format_dev.stdout}")
 
