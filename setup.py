@@ -9,5 +9,5 @@ setup(
     author_email="jeremy@turnkeylinux.org",
     url="https://github.com/turnkeylinux/ebsmount",
     packages=["ebsmount_lib"],
-    scripts=["ebsmount_manual.py", "ebsmount_udev.py"]
+    scripts=["ebsmount-manual", "ebsmount-udev"]
 )
