@@ -14,7 +14,6 @@ Package: ebsmount
 Architecture: all
 Depends:
  ${misc:Depends},
- ${python3:Depends},
  udev,
  turnkey-conffile
 Description: Automatically mount EC2/OpenStack EBS devices
