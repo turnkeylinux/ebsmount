@@ -91,13 +91,17 @@ def ebsmount_remove(devname, mountdir):
     """ebs device detached"""
 
     mounted = False
-    for d in os.listdir(mountdir):
-        path = join(mountdir, d)
-        if is_mounted(path):
-            mounted = True
-            continue
+    try:
+        for d in os.listdir(mountdir):
+            path = join(mountdir, d)
+            print(f'checking path: {path}')
+            if is_mounted(path):
+                print(f'path mounted: {path}')
+                mounted = True
+                continue
+            os.rmdir(path)
 
-        os.rmdir(path)
-
-    if not mounted:
-        os.rmdir(mountdir)
+        if not mounted:
+            os.rmdir(mountdir)
+    except FileNotFoundError:
+        pass
