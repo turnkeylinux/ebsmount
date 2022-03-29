@@ -75,12 +75,13 @@ def main():
     if not devname:
         raise parser.error('DEVNAME is required')
 
-    if not devpath:
-        raise parser.error('PHYSDEVPATH or DEVPATH is required')
+    # it seems that these may not be needed?!
+    #if not devpath:
+    #    raise parser.error('PHYSDEVPATH or DEVPATH is required')
 
-    if not _expected_devpath(devpath, config.devpaths.split()):
-        raise parser.error(
-                'PHYSDEVPATH/DEVPATH is not of the expected structure')
+    #if not _expected_devpath(devpath, config.devpaths.split()):
+    #    raise parser.error(
+    #            'PHYSDEVPATH/DEVPATH is not of the expected structure')
 
     # log trigger
     log(devname, f"received {args.action[0]} trigger")
