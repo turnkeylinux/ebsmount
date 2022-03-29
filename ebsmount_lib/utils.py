@@ -63,10 +63,10 @@ def mount(devpath, mountpath, options=''):
         mkdir_parents(mountpath)
 
     if options:
-        proc = subprocess.run(["mount", "-o", options, devpath, mountpath],
+        proc = subprocess.run(["systemd-mount", "-o", options, devpath, mountpath],
                               stderr=STDOUT, stdout=PIPE, text=True)
     else:
-        proc = subprocess.run(["mount", devpath, mountpath],
+        proc = subprocess.run(["systemd-mount", devpath, mountpath],
                               stderr=STDOUT, stdout=PIPE, text=True)
     if proc.returncode != 0:
         print(f'An error occurred when mounting:\n{proc.stdout}')
