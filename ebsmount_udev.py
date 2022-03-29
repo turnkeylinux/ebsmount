@@ -83,9 +83,8 @@ def main():
                 'PHYSDEVPATH/DEVPATH is not of the expected structure')
 
     # log trigger
-    log(devname, f"received {args.action} trigger")
-
-    func = getattr(ebsmount, 'ebsmount_' + args.action)
+    log(devname, f"received {args.action[0]} trigger")
+    func = getattr(ebsmount, 'ebsmount_' + args.action[0])
     func(devname, config.mountdir)
 
 
