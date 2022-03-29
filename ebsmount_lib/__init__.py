@@ -17,6 +17,8 @@
 import os
 # XXX TODO may need additional imports below (moving from importing *)
 from os.path import join, basename, exists
+import subprocess
+from subprocess import STDOUT, PIPE
 
 import pwd
 
@@ -79,8 +81,10 @@ def ebsmount_add(devname, mountdir):
                 log(devname, f"executing hook: {file}")
                 os.environ['HOME'] = pwd.getpwuid(os.getuid()).pw_dir
                 os.environ['MOUNTPOINT'] = mountpath
-                # XXX TODO - this command needs porting to subprocess!
-                system("/bin/bash --login -c '%s' 2>&1 | tee -a %s" % (fpath, config.logfile))
+                proc = subprocess.run(['/bin/bash', '--login', '-c', fpath],
+                                      stderr=STDOUT, stdout=PIPE, check=True)
+                subprocess.run(['tee', '-a', config.logfile],
+                               input=proc.stdout)
 
 
 def ebsmount_remove(devname, mountdir):
