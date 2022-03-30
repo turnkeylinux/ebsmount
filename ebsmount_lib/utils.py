@@ -37,6 +37,11 @@ def log(devname, s):
     print(entry)
 
 
+def fatal(s):
+    print("error: " + str(s), file=sys.stderr)
+    sys.exit(1)
+
+
 def mkdir_parents(path, mode=0o777):
     """mkdir 'path' recursively (I.e., equivalent to mkdir -p)"""
     dirs = path.split("/")

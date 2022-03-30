@@ -23,7 +23,7 @@ import sys
 import argparse
 
 import ebsmount_lib as ebsmount
-from ebsmount_lib.utils import log, config
+from ebsmount_lib.utils import fatal, log, config
 
 ENVVARS = """
 environment variables (required):
@@ -36,11 +36,6 @@ AWS EC2     DEVNAME         /dev/xvdf
 OpenStack   DEVNAME         /dev/vda
             DEVPATH         /devices/virtio-pci/virtio0/block/vda
 """
-
-
-def fatal(s):
-    print("error: " + str(s), file=sys.stderr)
-    sys.exit(1)
 
 
 def _expected_devpath(devpath, devpaths):

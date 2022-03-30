@@ -25,12 +25,7 @@ import subprocess
 from subprocess import PIPE, STDOUT
 
 import ebsmount_lib as ebsmount
-from ebsmount_lib.utils import config, is_mounted
-
-
-def fatal(s):
-    print("error: " + str(s), file=sys.stderr)
-    sys.exit(1)
+from ebsmount_lib.utils import fatal, config, is_mounted
 
 
 def _expected_devpath(devname, devpaths):
