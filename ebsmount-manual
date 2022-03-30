@@ -54,7 +54,6 @@ def main():
     )
     parser.add_argument(
         'devname',
-        nargs=1,
         help="EBS device to mount (e.g., /dev/xvdf, /dev/vda)"
     )
     parser.add_argument(
@@ -67,9 +66,8 @@ def main():
         help="Format device prior to mount (defaults to ext4 unless specified)"
     )
     args = parser.parse_args()
-    devname = args.devname[0]
     filesystem = args.filesystem
-    if not os.path.exists(devname):
+    if not os.path.exists(args.devname):
         raise parser.error(f"{devname} does not exist")
 
     if not _expected_devpath(devname, config.devpaths.split()):
@@ -77,19 +75,19 @@ def main():
                 "devpath not of expected structure, or failed lookup")
 
     if filesystem:
-        if is_mounted(devname):
-            raise parser.error(f"{devname} is mounted")
+        if is_mounted(args.devname):
+            raise parser.error(f"{args.devname} is mounted")
 
         if filesystem not in config.filesystems.split():
             raise parser.error(
                     f"{filesystem} is not supported in {config.CONF_FILE}")
 
-        format_dev = subprocess.run([f"mkfs.{filesystem}", "-q", devname],
+        format_dev = subprocess.run([f"mkfs.{filesystem}", "-q", args.devname],
                                     stdout=PIPE, stderr=STDOUT, text=True)
         if format_dev.returncode != 0:
             fatal(f"formating {filesystem} failed: {format_dev.stdout}")
 
-    ebsmount.ebsmount_add(devname, config.mountdir)
+    ebsmount.ebsmount_add(args.devname, config.mountdir)
 
 
 if __name__ == "__main__":
