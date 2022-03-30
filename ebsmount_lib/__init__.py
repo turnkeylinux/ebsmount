@@ -48,7 +48,8 @@ def ebsmount_add(devname, mountdir):
 
         if filesystem not in config.filesystems.split():
             log(devname,
-                f"filesystem ({filesystem}) not supported: {devpath}")
+                f"invalid filesystem: {filesystem}, encountered while"
+                f" adding {devpath}")
             continue
 
         if is_mounted(devpath):
