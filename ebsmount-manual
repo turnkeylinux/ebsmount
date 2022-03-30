@@ -80,6 +80,7 @@ def main():
 
         if filesystem not in config.filesystems.split():
             raise parser.error(
+                    # XXX TODO this message could be better/clearer
                     f"{filesystem} is not supported in {config.CONF_FILE}")
 
         format_dev = subprocess.run([f"mkfs.{filesystem}", "-q", args.devname],
