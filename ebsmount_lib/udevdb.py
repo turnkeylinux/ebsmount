@@ -98,7 +98,7 @@ def _disk_devices():
 
             attrs = list(dev.env.keys())
             attrs.sort()
-            column_len = max([len(attr) + 1 for attr in attrs])
+            column_len = max(len(attr) + 1 for attr in attrs)
             for attr in attrs:
                 name = attr + ":"
                 print(f"  {name.ljust(column_len)} {dev.env[attr]}")
