@@ -41,7 +41,7 @@ def _expected_devpath(devname, devpaths):
 
     for line in raw_output.splitlines():
         line = line.strip()
-        m = re.match("^looking at parent device '(.*)':", line)
+        m = re.match("looking at parent device '(.*)':", line)
         if m:
             devpath = m.group(1)
             for pattern in devpaths:
