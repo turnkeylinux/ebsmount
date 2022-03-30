@@ -1,0 +1,7 @@
+Template: ebsmount/enable_hooks
+Type: boolean
+Default: false
+_Description: Enable hooks? Doing so may pose a security risk.
+ Hooks are the ebsmount package's way of having mounted volumes configure
+ themselves (see
+ `https://raw.github.com/turnkeylinux/ebsmount/master/docs/README').

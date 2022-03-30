@@ -1,0 +1,87 @@
+#!/usr/bin/python3
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of
+# the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""EBS Mount - triggered by udev on EBS attach and detach"""
+
+import re
+import os
+import sys
+import argparse
+
+import ebsmount_lib as ebsmount
+from ebsmount_lib.utils import fatal, log, config
+
+ENVVARS = """
+environment variables (required):
+
+platfrom    env var         example value
+--------    -------         -------------
+AWS EC2     DEVNAME         /dev/xvdf
+            PHYSDEVPATH     /devices/vbd-51792/block/xvdf
+
+OpenStack   DEVNAME         /dev/vda
+            DEVPATH         /devices/virtio-pci/virtio0/block/vda
+"""
+
+
+def _expected_devpath(devpath, devpaths):
+    for pattern in devpaths:
+        if re.search(pattern, devpath):
+            return True
+
+    return False
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog='ebsmount-udev',
+        description="EBS Mount - triggered by udev on EBS attach and detach",
+        epilog=ENVVARS
+    )
+    parser.add_argument(
+        'action',
+        choices=["add", "remove"],
+        help="action trigger"
+    )
+    args = parser.parse_args()
+
+    if not config.enabled.lower() == "true":
+        fatal(f'ebsmount is not enabled ({config.CONF_FILE})')
+
+    devname = os.getenv('DEVNAME', None)
+    devpath = os.getenv('PHYSDEVPATH', os.getenv('DEVPATH', None))
+
+    if not devname:
+        raise parser.error('DEVNAME is required')
+
+    # it seems that these may not be needed?!
+    #if not devpath:
+    #    raise parser.error('PHYSDEVPATH or DEVPATH is required')
+
+    #if not _expected_devpath(devpath, config.devpaths.split()):
+    #    raise parser.error(
+    #            'PHYSDEVPATH/DEVPATH is not of the expected structure')
+
+    # log trigger
+    log(devname, f"received {args.action} trigger")
+    func = getattr(ebsmount, 'ebsmount_' + args.action)
+    func(devname, config.mountdir)
+
+
+if __name__ == "__main__":
+    main()

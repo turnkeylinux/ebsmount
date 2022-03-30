@@ -1,0 +1,9 @@
+# udev rules to trigger the ebsmount systemd service.
+
+# Amazon EC2
+KERNEL=="xvd[a-z]|nvme[0-26]n[0-26]", SUBSYSTEM=="block", ACTION=="add", RUN+="/usr/bin/systemctl start ebsmount@%k"
+KERNEL=="xvd[a-z]|nvme[0-26]n[0-26]", SUBSYSTEM=="block", ACTION=="remove", RUN+="/usr/bin/systemctl stop ebsmount@%k"
+
+# OpenStack
+KERNEL=="vd[a-z]*", SUBSYSTEM=="block", ACTION=="add", RUN+="@PATH_BIN@/ebsmount-udev add"
+KERNEL=="vd[a-z]*", SUBSYSTEM=="block", ACTION=="remove", RUN+="@PATH_BIN@/ebsmount-udev remove"

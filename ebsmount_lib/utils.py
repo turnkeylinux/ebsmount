@@ -1,8 +1,9 @@
-# Copyright (c) 2010 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2010-2021 Alon Swartz <alon@turnkeylinux.org>
+# Copyright (c) 2022 TurnKey GNU/Linux <admin@turnkeylinux.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of 
+# published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,22 +15,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import executil
+import subprocess
+from subprocess import PIPE, STDOUT
+
 from conffile import ConfFile
+
 
 class EBSMountConf(ConfFile):
     CONF_FILE = '/etc/ebsmount.conf'
-    REQUIRED = ['enabled', 'runhooks', 'mountdir', 'mountoptions', 'filesystems', 'logfile', 'devpaths']
+    REQUIRED = ['enabled', 'runhooks', 'mountdir', 'mountoptions',
+                'filesystems', 'logfile', 'devpaths']
+
 
 config = EBSMountConf()
 
 
 def log(devname, s):
-    entry = "%s: %s" % (devname, s)
-    file(config.logfile, 'a').write(entry + "\n")
-    print entry
+    entry = f"{devname}: {s}"
+    with open(config.logfile, 'a') as fob:
+        fob.write(entry + "\n")
+    print(entry)
 
-def mkdir_parents(path, mode=0777):
+
+def fatal(s):
+    print("error: " + str(s), file=sys.stderr)
+    sys.exit(1)
+
+
+def mkdir_parents(path, mode=0o777):
     """mkdir 'path' recursively (I.e., equivalent to mkdir -p)"""
     dirs = path.split("/")
     for i in range(2, len(dirs) + 1):
@@ -39,20 +52,26 @@ def mkdir_parents(path, mode=0777):
 
         os.mkdir(dir, mode)
 
+
 def is_mounted(path):
     """test if path is mounted"""
-    mounts = file("/proc/mounts").read()
+    with open("/proc/mounts") as fob:
+        mounts = fob.read()
     if mounts.find(path) != -1:
         return True
     return False
 
-def mount(devpath, mountpath, options=None):
+
+def mount(devpath, mountpath, options=''):
     """mount devpath to mountpath with specified options (creates mountpath)"""
     if not os.path.exists(mountpath):
         mkdir_parents(mountpath)
 
     if options:
-        executil.system("mount", "-o", options, devpath, mountpath)
+        proc = subprocess.run(["systemd-mount", "-o", options, devpath, mountpath],
+                              stderr=STDOUT, stdout=PIPE, text=True)
     else:
-        executil.system("mount", devpath, mountpath)
-
+        proc = subprocess.run(["systemd-mount", devpath, mountpath],
+                              stderr=STDOUT, stdout=PIPE, text=True)
+    if proc.returncode != 0:
+        print(f'An error occurred when mounting:\n{proc.stdout}')

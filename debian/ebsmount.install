@@ -1,0 +1,2 @@
+conf/85-ebsmount.rules  usr/lib/udev/rules.d/
+conf/*.conf             etc/

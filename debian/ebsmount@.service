@@ -1,0 +1,14 @@
+[Unit]
+Description=ebsmount for %i
+Documentation=man:ebsmount-udev(8)
+After=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+Environment="DEVNAME=%i"
+ExecStart=/usr/bin/ebsmount-udev add
+ExecStop=/usr/bin/ebsmount-udev remove
+# Very important: Expose mounted volumes to other processes.
+PrivateMounts=no
+MountFlags=shared

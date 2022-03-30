@@ -2,8 +2,8 @@
 
 include /usr/share/dpkg/pkg-info.mk
 
-%:
-	dh $@ --with python2
+# disable test for now (import test fails as conf file doesn't exist)
+export PYBUILD_DISABLE_python3=test
 
-override_dh_auto_install:
-	dh_auto_install -- prefix=debian/$(DEB_SOURCE)/usr destdir=debian/$(DEB_SOURCE)
+%:
+	dh $@ --buildsystem=pybuild
